@@ -33,14 +33,14 @@ from
 --- 4. Total de productos vendidos por tipo
 set search_path to paws_and_claws;
 
-select 
-    producto.tipo, 
-    sum(detalle_venta.cantidad) as total_vendidos
-from 
-    producto
-    natural join detalle_venta
-group by 
-    producto.tipo;
+select distinct p.tipo, 
+       (select sum(dv.cantidad)
+        from producto p2
+        natural join detalle_venta dv
+        where p2.tipo = p.tipo) as total_vendidos
+from producto p
+natural join detalle_venta;
+
 
 --- 5. Calcular el total de ventas realizadas por cada veterinario (Proyección Generalizada y Función de Agregación)
 select veterinario.nombre, sum(detalle_venta.cantidad) as total_ventas
